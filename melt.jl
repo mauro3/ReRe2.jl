@@ -25,9 +25,17 @@ end
 @assert accumulate(5, 5) == 0
 
 
-function lapse(T, dH, lapse_rate)
-    return T + dH * lapse_rate
+function lapse(T, dz, lapse_rate)
+    return T + dz * lapse_rate
 end
 
 @assert lapse(5, 100, 1) > 5
 @assert lapse(5, -100, 1) < 5
+
+function synthetic_T(t)
+    return -10*cos(2pi/364 * t) - 8*cos(2pi* t) + 5
+end
+
+function synthetic_P(t)
+    return 8e-3
+end
