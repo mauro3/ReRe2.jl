@@ -12,3 +12,14 @@ end
 @assert melt(4, 7) == 4*7
 melt_factor = 0.005
 @assert melt(4, melt_factor) == 4*melt_factor
+
+function accumulate(T, P_h)
+    if T<4
+        return 0.0
+    else
+        P_h
+    end
+end
+
+@assert accumulate(0, 5) == 0
+@assert accumulate(5, 5) > 0
