@@ -39,3 +39,22 @@ end
 function synthetic_P(t)
     return 8e-3
 end
+
+function total_mass_balance(Ts, Ps, melt_factor, T_threshold)
+    @assert length(Ts)==length(Ps)
+    total = 0.0
+    for i = 1:length(Ts)
+        T, P = Ts[i], Ps[i]
+        total = total - melt(T, melt_factor) + accumulate(T, P, T_threshold)
+    end
+    return total
+end
+
+t = 0:1/24:365
+ele = 1000
+lapse_rate = -0.6/100
+melt_factor = 0.005
+T_threshold = 4
+Ts = lapse.(synthetic_T.(t), ele, lapse_rate)
+Ps = synthetic_P.(t)
+total_mass_balance(Ts, Ps, melt_factor, T_threshold)
