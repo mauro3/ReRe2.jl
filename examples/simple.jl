@@ -1,5 +1,54 @@
 include("../src/GlacierMassBalance.jl")
 
+
+"""
+    synthetic_T(t)
+
+Generate synthetic temperature for a given time `t`.
+
+# Arguments
+- `t::Number`: The time.
+
+# Returns
+- `Number`: The synthetic temperature.
+"""
+function synthetic_T(t)
+    return -10*cos(2pi/364 * t) - 8*cos(2pi* t) + 5
+end
+
+
+
+"""
+    synthetic_P(t)
+
+Generate synthetic precipitation for a given time `t`.
+
+# Arguments
+- `t::Number`: The time.
+
+# Returns
+- `Number`: The synthetic precipitation (constant value 8e-3).
+"""
+function synthetic_P(t)
+    return 8e-3
+end
+
+
+"""
+    synthetic_glacier()
+
+Generate synthetic glacier elevation.
+
+# Returns
+- `AbstractVector{Number}`: array of elevations
+"""
+function synthetic_glacier()
+    x = 0:500:5000
+    elevation = x .* 0.2 .+ 1400
+    return elevation
+end
+
+
 using Plots
 t = 0:1/24:365
 plot(t, synthetic_T.(t))
