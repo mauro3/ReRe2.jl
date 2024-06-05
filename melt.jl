@@ -13,16 +13,16 @@ end
 melt_factor = 0.005
 @assert melt(4, melt_factor) == 4*melt_factor
 
-function accumulate(T, P_h)
-    if T<=4
-        P_h
+function accumulate(T, P, T_threshold)
+    if T<= T_threshold
+        P
     else
         return 0.0
     end
 end
 
-@assert accumulate(0, 5) > 0
-@assert accumulate(5, 5) == 0
+@assert accumulate(0, 5, 4) > 0
+@assert accumulate(5, 5, 4) == 0
 
 
 function lapse(T, dz, lapse_rate)
