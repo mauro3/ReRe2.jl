@@ -1,5 +1,6 @@
 include("../src/GlacierMassBalance.jl")
 
+## Define the synthetic weather and glacier
 
 """
     synthetic_T(t)
@@ -7,10 +8,10 @@ include("../src/GlacierMassBalance.jl")
 Generate synthetic temperature for a given time `t`.
 
 # Arguments
-- `t::Number`: The time.
+- `t`: The time.
 
 # Returns
-- `Number`: The synthetic temperature.
+- The synthetic temperature.
 """
 function synthetic_T(t)
     return -10*cos(2pi/364 * t) - 8*cos(2pi* t) + 5
@@ -24,10 +25,10 @@ end
 Generate synthetic precipitation for a given time `t`.
 
 # Arguments
-- `t::Number`: The time.
+- `t`: The time.
 
 # Returns
-- `Number`: The synthetic precipitation (constant value 8e-3).
+- The synthetic precipitation (constant value 8e-3).
 """
 function synthetic_P(t)
     return 8e-3
@@ -40,7 +41,7 @@ end
 Generate synthetic glacier elevation.
 
 # Returns
-- `AbstractVector{Number}`: array of elevations
+- Array of elevations
 """
 function synthetic_glacier()
     x = 0:500:5000
@@ -48,32 +49,37 @@ function synthetic_glacier()
     return elevation
 end
 
-
-using Plots
-t = 0:1/24:365
-plot(t, synthetic_T.(t))
-
-dt = 1/24
-t = 0:dt:365
+## Some constants
 lapse_rate = -0.6/100
 melt_factor = 0.005
 T_threshold = 4
+dt = 1/24
+t = 0:dt:365
 
+## Plot the synthetic weather
+using Plots; pyplot()
+plot(t, synthetic_T.(t), xlabel="time (d)", ylabel="T (C)")
+savefig(make_sha_filename("results/synthetic_T", ".png"))
+
+## Run the model for one year at a point
 ele = 1500
-Ts = lapse.(synthetic_T.(t), ele, lapse_rate); maximum(Ts)
+Ts_ele = lapse.(synthetic_T.(t), ele, lapse_rate); maximum(Ts)
 Ps = synthetic_P.(t);
-total_point_balance(dt, Ts, Ps, melt_factor, T_threshold)
+total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 
+## Run the model for one year for the whole glacier
 zs, dA = synthetic_glacier()
 Ts = synthetic_T.(t)
 smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
 
+## Generate output table
 # make a table for different temperature offsets and store it
 out = []
 for dT = -4:4
-    Ts = synthetic_T.(t) .+ dT
-    smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-    push!(out, [dT, smb])
+    Ts_ = synthetic_T.(t) .+ dT
+    smb_ = total_glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    push!(out, [dT, smb_])
 end
 using DelimitedFiles
-writedlm(make_sha_filename("deltaT_impact", ".csv"), out, ',')
+mkpath("results")
+writedlm(make_sha_filename("results/deltaT_impact", ".csv"), out, ',')
