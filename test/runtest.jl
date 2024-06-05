@@ -19,3 +19,7 @@ melt_factor = 0.005
 # also test example
 include("../examples/simple.jl")
 @test smb ≈ -1.8770515193685968
+
+# utils.jl testing
+@test startswith(make_sha_filename("test", ".png"), "test-")
+@test endswith(make_sha_filename("test", ".png"), ".png")

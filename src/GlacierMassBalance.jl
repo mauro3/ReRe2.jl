@@ -1,3 +1,5 @@
+using DelimitedFiles
+
 """
     melt(T, melt_factor)
 
@@ -118,3 +120,4 @@ function total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_r
 end
 
 include("utils.jl")
+include("data.jl")
