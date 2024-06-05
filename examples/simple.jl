@@ -64,9 +64,16 @@ Ts = lapse.(synthetic_T.(t), ele, lapse_rate); maximum(Ts)
 Ps = synthetic_P.(t);
 total_point_balance(dt, Ts, Ps, melt_factor, T_threshold)
 
-
-
 zs, dA = synthetic_glacier()
 Ts = synthetic_T.(t)
 smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-@show smb
+
+# make a table for different temperature offsets and store it
+out = []
+for dT = -4:4
+    Ts = synthetic_T.(t) .+ dT
+    smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+    push!(out, [dT, smb])
+end
+using DelimitedFiles
+writedlm(make_sha_filename("deltaT_impact", ".csv"), out, ',')
