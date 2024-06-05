@@ -23,3 +23,11 @@ end
 
 @assert accumulate(0, 5) == 0
 @assert accumulate(5, 5) > 0
+
+
+function lapse(T, dH, lapse_rate)
+    return T + dH * lapse_rate
+end
+
+@assert lapse(5, 100, 1) > 5
+@assert lapse(5, -100, 1) < 5
