@@ -6,13 +6,6 @@ function melt(T, melt_factor)
     end
 end
 
-@assert melt(0, 1) == 0
-@assert melt(-10, 1) == 0
-@assert melt(1, 1) == 1
-@assert melt(4, 7) == 4*7
-melt_factor = 0.005
-@assert melt(4, melt_factor) == 4*melt_factor
-
 function accumulate(T, P, T_threshold)
     if T<= T_threshold
         P
@@ -21,16 +14,9 @@ function accumulate(T, P, T_threshold)
     end
 end
 
-@assert accumulate(0, 5, 4) > 0
-@assert accumulate(5, 5, 4) == 0
-
-
 function lapse(T, dz, lapse_rate)
     return T + dz * lapse_rate
 end
-
-@assert lapse(5, 100, 1) > 5
-@assert lapse(5, -100, 1) < 5
 
 function synthetic_T(t)
     return -10*cos(2pi/364 * t) - 8*cos(2pi* t) + 5
@@ -40,9 +26,6 @@ function synthetic_P(t)
     return 8e-3
 end
 
-using Plots
-t = 0:1/24:365
-plot(t, synthetic_T.(t))
 
 function total_point_balance(dt, Ts, Ps, melt_factor, T_threshold)
     @assert length(Ts)==length(Ps)
@@ -53,18 +36,6 @@ function total_point_balance(dt, Ts, Ps, melt_factor, T_threshold)
     end
     return total
 end
-
-dt = 1/24
-t = 0:dt:365
-lapse_rate = -0.6/100
-melt_factor = 0.005
-T_threshold = 4
-
-ele = 1500
-Ts = lapse.(synthetic_T.(t), ele, lapse_rate); maximum(Ts)
-Ps = synthetic_P.(t);
-total_point_balance(dt, Ts, Ps, melt_factor, T_threshold)
-
 
 function total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
     total = 0.0
@@ -84,7 +55,3 @@ function synthetic_glacier()
     cell_area = 500*500 # area of one cell
     return elevation, cell_area
 end
-
-zs, dA = synthetic_glacier()
-Ts = synthetic_T.(t)
-total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
