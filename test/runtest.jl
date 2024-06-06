@@ -1,3 +1,5 @@
+## To run the tests, execute this file from within the directory
+
 include("../src/GlacierMassBalance.jl")
 using Test
 

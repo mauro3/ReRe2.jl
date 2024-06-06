@@ -70,14 +70,15 @@ total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 ## Run the model for one year for the whole glacier
 zs = synthetic_glacier()
 Ts = synthetic_T.(t)
-smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+smb, smb_pointwise = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+heatmap(smb_pointwise)
 
 ## Generate output table
 # make a table for different temperature offsets and store it
 out = []
 for dT = -4:4
     Ts_ = synthetic_T.(t) .+ dT
-    smb_ = total_glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    smb_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
     push!(out, [dT, smb_])
 end
 using DelimitedFiles

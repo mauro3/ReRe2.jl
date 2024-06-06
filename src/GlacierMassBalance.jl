@@ -91,7 +91,7 @@ end
 
 
 """
-    total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+    glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
 
 Calculate the total glacier balance over time and elevation.
 
@@ -106,15 +106,18 @@ Calculate the total glacier balance over time and elevation.
 
 # Returns
 - The total glacier balance [m]
+- Point wise balance [m]
 """
-function total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+function glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
     total = 0.0
+    pointwise = zeros(length(zs))
     for i = 1:length(zs)
         z = zs[i]
         TT = lapse.(Ts, z, lapse_rate)
-        total = total + total_point_balance(dt, TT, Ps, melt_factor, T_threshold)
+        pointwise[i] = total_point_balance(dt, TT, Ps, melt_factor, T_threshold)
+        total = total + pointwise[i]
     end
-    return total/length(zs) # average over all cells
+    return total/length(zs), pointwise # average over all cells
 end
 
 include("utils.jl")
