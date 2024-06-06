@@ -14,43 +14,17 @@ mkpath(joinpath(@__DIR__, "../../results"))
 
 ## Download data
 weather_fl = joinpath(@__DIR__, "../../data/own/weather.dat")
-if !isfile(weather_fl)
-    Downloads.download("https://raw.githubusercontent.com/mauro3/CORDS/master/data/workshop-reproducible-research/own/weather.dat",
-                       weather_fl)
-    # don't download the info file weather.info
-end
+download_file("https://raw.githubusercontent.com/mauro3/CORDS/master/data/workshop-reproducible-research/own/weather.dat", weather_fl)
 
+mask_zip = joinpath(@__DIR__, "../../data/own/mask_breithorngletscher.zip")
 mask_fl = joinpath(@__DIR__, "../../data/own/mask_breithorngletscher.asc")
-if !isfile(mask_fl)
-    zip_fl = splitext(mask_fl)[1]*".zip"
-    Downloads.download("https://github.com/mauro3/CORDS/raw/master/data/workshop-reproducible-research/own/mask_breithorngletscher.zip",
-                       zip_fl)
-    # do some processing, namely unzip
-    r = ZipFile.Reader(zip_fl)
-    for f in r.files
-        if f.name == "mask_breithorngletscher/mask_breithorngletscher.asc"
-            write(mask_fl, read(f, String))
-        end
-    end
-    # delete zip file as we don't need it anymore
-    rm(zip_fl)
-end
+download_file("https://github.com/mauro3/CORDS/raw/master/data/workshop-reproducible-research/own/mask_breithorngletscher.zip", mask_zip)
+unzip_one_file(mask_zip, "mask_breithorngletscher/mask_breithorngletscher.asc", mask_fl)
 
+dem_zip = joinpath(@__DIR__, "../../data/foreign/swisstopo_dhm200_cropped.zip")
 dem_fl = joinpath(@__DIR__, "../../data/foreign/dhm200_cropped.asc")
-if !isfile(dem_fl)
-    zip_fl = splitext(dem_fl)[1]*".zip"
-    Downloads.download("https://github.com/mauro3/CORDS/raw/master/data/workshop-reproducible-research/foreign/swisstopo_dhm200_cropped.zip",
-                       zip_fl)
-    # do some processing, namely unzip
-    r = ZipFile.Reader(zip_fl)
-    for f in r.files
-        if f.name == "swisstopo_dhm200_cropped/dhm200_cropped.asc"
-            write(dem_fl, read(f, String));
-        end
-    end
-    # delete zip file as we don't need it anymore
-    rm(zip_fl)
-end
+download_file("https://github.com/mauro3/CORDS/raw/master/data/workshop-reproducible-research/foreign/swisstopo_dhm200_cropped.zip", dem_zip)
+unzip_one_file(dem_zip, "swisstopo_dhm200_cropped/dhm200_cropped.asc", dem_fl)
 
 ## Read data and visualize it
 t, T = read_campbell(weather_fl)

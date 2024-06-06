@@ -24,8 +24,7 @@ function make_sha_filename(basename, ext)
 end
 
 """
-    download_file(url, destination;
-                    force_download=false)
+    download_file(url, destination; force_download=false)
 
 Download a file, if it has not been downloaded already.
 
@@ -37,31 +36,52 @@ as you would to see them in a browser.
 
 # Input
 - url -- url for download
-- destination -- path (directory + file) where to store it
+- destination_file -- path (directory + file) where to store it
 
 ## Optional keyword args
-- force_download -- force the download, even if file is present
-
-# Output:
-- file with full path
-
+- force_download=false -- force the download, even if file is present
 """
-function download_file(url, dir, file; force_download=false)
+function download_file(url, destination_file; force_download=false)
+    # make sure the directory exists
+    mkpath(splitdir(destination_file)[1])
 
-    dirfile = joinpath(dir, file)
-    mkpath(dir)
-
-    if isfile(dirfile) && !force_download
+    if isfile(destination_file) && !force_download
         # do nothing
-        print(" ... already downloaded ... ")
-    elseif isfile(dirfile)
+        println(" Already downloaded $destination_file")
+    elseif isfile(destination_file)
         # delete and re-download
-        rm(dirfile)
-        print(" ... downloading ... ")
-        Downloads.download(url, dirfile)
+        rm(destination_file)
+        print("Re-Downloading $destination_file ... ")
+        Downloads.download(url, destination_file)
+        println("done.")
     else
         # download
-        Downloads.download(url, dirfile)
+        print("Downloading $destination_file ... ")
+        Downloads.download(url, destination_file)
+        println("done.")
     end
-    return dirfile
+    return
+end
+
+"""
+    unzip_one_file(zipfile, filename, destination_file)
+
+Unzip one file from a zip-archive.
+
+Inputs:
+- `zipfile`: path to zip-file
+- `filename`: name of file within the zip-archive to unzip, including any paths within the zipfile
+- 'destination_file`: path+file where to place the file
+"""
+function unzip_one_file(zipfile, filename, destination_file)
+    # make sure the directory exists
+    mkpath(splitdir(destination_file)[1])
+
+    r = ZipFile.Reader(zipfile)
+    for f in r.files
+        if f.name == filename
+            write(destination_file, read(f, String))
+        end
+    end
+    return nothing
 end
