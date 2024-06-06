@@ -96,7 +96,7 @@ end
 Calculate the total glacier balance over time and elevation.
 
 # Arguments
-- `zs`: Array of elevations.
+- `zs`: Array of elevations (with the weather station as datum)
 - `dt`: The time step.
 - `Ts`: Array of temperatures.
 - `Ps`: Array of precipitations.
@@ -105,18 +105,16 @@ Calculate the total glacier balance over time and elevation.
 - `lapse_rate`: The lapse rate (temperature change per unit elevation change).
 
 # Returns
-- The total glacier balance.
+- The total glacier balance [m]
 """
 function total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
     total = 0.0
-    total_area = 0.0
-    TT = lapse.(Ts, zs[1], lapse_rate)
     for i = 1:length(zs)
         z = zs[i]
         TT = lapse.(Ts, z, lapse_rate)
         total = total + total_point_balance(dt, TT, Ps, melt_factor, T_threshold)
     end
-    return total
+    return total/length(zs) # average over all cells
 end
 
 include("utils.jl")

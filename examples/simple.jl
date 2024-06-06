@@ -63,7 +63,7 @@ savefig(make_sha_filename("results/synthetic_T", ".png"))
 
 ## Run the model for one year at a point
 ele = 1500
-Ts_ele = lapse.(synthetic_T.(t), ele, lapse_rate); maximum(Ts)
+Ts_ele = lapse.(synthetic_T.(t), ele, lapse_rate)
 Ps = synthetic_P.(t);
 total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 
