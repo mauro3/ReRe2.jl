@@ -68,7 +68,7 @@ Ps = synthetic_P.(t);
 total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 
 ## Run the model for one year for the whole glacier
-zs, dA = synthetic_glacier()
+zs = synthetic_glacier()
 Ts = synthetic_T.(t)
 smb = total_glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
 
