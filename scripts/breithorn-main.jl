@@ -1,9 +1,16 @@
 ## Main script to run all Breithorngletscher tasks
 
-# Keep the data-fetching separate from the processing/model code.  This is also where to put model parameters.
-# This way all the input-data & input-parameters are in one place.
+# Load packages
+using Plots
+using ASCIIrasters
+# Load model code
+include("../src/GlacierMassBalance.jl")
+
+# Keep the data-fetching separate from the processing/model code.
 include("breithorn-getdata.jl")
+# Keep the model parameters separate from the processing/model code, otherwise
+# parameters are difficult to find.
 include("breithorn-model-paras.jl")
 
+## Load data and run the model
 include("breithorn-run-model.jl")
-include("breithorn-make-outputs.jl")

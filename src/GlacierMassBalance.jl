@@ -36,7 +36,7 @@ Calculate the accumulation given temperature `T`, precipitation `P`, and a tempe
 - `P` if `T` is less than or equal to `T_threshold`, otherwise returns 0.
 """
 function accumulate(T, P, T_threshold)
-    if T<= T_threshold
+    if T <= T_threshold
         P
     else
         return 0.0
@@ -93,7 +93,8 @@ end
 """
     glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
 
-Calculate the total glacier balance over time and elevation.
+Calculate the total glacier balance over time and elevation and also at each elevation
+separately.
 
 # Arguments
 - `zs`: Array of elevations (with the weather station as datum)
@@ -117,7 +118,7 @@ function glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
         pointwise[i] = total_point_balance(dt, TT, Ps, melt_factor, T_threshold)
         total = total + pointwise[i]
     end
-    return total/length(zs), pointwise # average over all cells
+    return total/length(zs), pointwise # average total over all cells
 end
 
 include("utils.jl")

@@ -1,7 +1,7 @@
 include("../src/GlacierMassBalance.jl")
+using Plots
 
 ## Define the synthetic weather and glacier
-
 """
     synthetic_T(t)
 
@@ -16,8 +16,6 @@ Generate synthetic temperature for a given time `t`.
 function synthetic_T(t)
     return -10*cos(2pi/364 * t) - 8*cos(2pi* t) + 5
 end
-
-
 
 """
     synthetic_P(t)
@@ -34,11 +32,10 @@ function synthetic_P(t)
     return 8e-3
 end
 
-
 """
     synthetic_glacier()
 
-Generate synthetic glacier elevation.
+Generate synthetic glacier elevation, note this is a 1D glacier!
 
 # Returns
 - Array of elevations
@@ -49,7 +46,7 @@ function synthetic_glacier()
     return elevation
 end
 
-## Some constants
+## Define constants
 lapse_rate = -0.6/100
 melt_factor = 0.005
 T_threshold = 4
@@ -57,8 +54,8 @@ dt = 1/24
 t = 0:dt:365
 
 ## Plot the synthetic weather
-using Plots; pyplot()
 plot(t, synthetic_T.(t), xlabel="time (d)", ylabel="T (C)")
+mkpath("results")
 savefig(make_sha_filename("results/synthetic_T", ".png"))
 
 ## Run the model for one year at a point
@@ -70,17 +67,18 @@ total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 ## Run the model for one year for the whole glacier
 zs = synthetic_glacier()
 Ts = synthetic_T.(t)
-smb, smb_pointwise = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-heatmap(smb_pointwise)
+total_massbalance, point_massbalance = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+plot(point_massbalance)
+savefig(make_sha_filename("results/synthetic_massbalance_field", ".png"))
 
 ## Generate output table
 # make a table for different temperature offsets and store it
 out = []
 for dT = -4:4
     Ts_ = synthetic_T.(t) .+ dT
-    smb_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
-    push!(out, [dT, smb_])
+    massbalance_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    push!(out, [dT, massbalance_])
 end
-using DelimitedFiles
+
 mkpath("results")
 writedlm(make_sha_filename("results/deltaT_impact", ".csv"), out, ',')

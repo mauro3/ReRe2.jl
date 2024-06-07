@@ -1,10 +1,4 @@
-# This is for Gornergletscher
-using Plots; pyplot()
-using Downloads: Downloads
-using ZipFile:ZipFile
-using ASCIIrasters
-include("../src/GlacierMassBalance.jl")
-
+# This is for Breithorngletscher near Zermatt, Switzerland
 results_dir = joinpath(@__DIR__, "../../results/")
 
 ## Setup project folder

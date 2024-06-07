@@ -4,14 +4,12 @@
 """
     read_campbell(file)
 
-Reads a Campbell logger format file with temperature and precip.
-Moves sampling from 30min to 1h
+Reads a Campbell logger format file with temperature
+(ignores the other data present in file, namely precipitation)
 
 Return
 - t -- as DateTime
 - T -- [C]
-- P -- [m/d]
-- elevation -- [m asl]
 """
 function read_campbell(file)
     dat = readdlm(file, ',')
@@ -20,15 +18,8 @@ function read_campbell(file)
     # go from 30min dt to 60 min
     t = t[1:2:end]
     temp = dat[1:2:end,6]
-    precip = dat[1:2:end,7] .+ dat[2:2:end,7] # this needs summing!
-    elevation = 2650
-    return t, temp, precip/1000*24, elevation
+    return t, temp
 end
-
-######
-## Misc helpers
-######
-
 
 """
     parse_date_time(year, day, HHMM)

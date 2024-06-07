@@ -25,7 +25,7 @@ T_threshold = 10
 
 # also test example
 include("../examples/simple.jl")
-@test smb ≈ -0.11096645178976892
+@test total_massbalance ≈ -0.11096645178976892
 
 # utils.jl testing
 @test startswith(make_sha_filename("test", ".png"), "test-")

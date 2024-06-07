@@ -1,11 +1,29 @@
 ## General utility functions
-using LibGit2
+using LibGit2, ZipFile, Downloads
 
+"""
+    make_sha_filename(basename, ext)
+
+Generate a filename using the SHA hash of the current Git HEAD commit, a "-dirty" for
+repos with uncommitted changes and the provided basename and extension.
+
+Parameters:
+- basename: The base part of the filename.
+- ext: The extension part of the filename.
+
+Returns:
+A string that follows the format: `basename-short_hash[-dirty].ext`
+
+Note:
+The equivalent bash command to get the SHA hash is: `git rev-parse --short=10 HEAD`
+
+Example:
+If the current Git HEAD commit SHA hash (shortened) is 'a1b2c3d4e5', and there are no uncommitted changes, the
+return value for `make_sha_filename("myfile", ".txt")` will be `myfile-a1b2c3d4e5.txt`.
+If there are uncommitted changes, the return value will be `myfile-a1b2c3d4e5-dirty.txt`.
+"""
 function make_sha_filename(basename, ext)
-    ## Bash command line invocation (maybe not so portable between operating systems)
-    # git rev-parse --short=10 HEAD
-
-    # Open the repository in the current directory
+    # Open the git-repository in the current directory
     repo = LibGit2.GitRepoExt(".")
 
     # Get the object ID of the HEAD commit
@@ -24,7 +42,7 @@ function make_sha_filename(basename, ext)
 end
 
 """
-    download_file(url, destination; force_download=false)
+    download_file(url, destination_file)
 
 Download a file, if it has not been downloaded already.
 
@@ -37,23 +55,14 @@ as you would to see them in a browser.
 # Input
 - url -- url for download
 - destination_file -- path (directory + file) where to store it
-
-## Optional keyword args
-- force_download=false -- force the download, even if file is present
 """
-function download_file(url, destination_file; force_download=false)
+function download_file(url, destination_file)
     # make sure the directory exists
     mkpath(splitdir(destination_file)[1])
 
-    if isfile(destination_file) && !force_download
+    if isfile(destination_file)
         # do nothing
         println(" Already downloaded $destination_file")
-    elseif isfile(destination_file)
-        # delete and re-download
-        rm(destination_file)
-        print("Re-Downloading $destination_file ... ")
-        Downloads.download(url, destination_file)
-        println("done.")
     else
         # download
         print("Downloading $destination_file ... ")
