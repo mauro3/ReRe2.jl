@@ -15,18 +15,18 @@ savefig(make_sha_filename(joinpath(results_dir, "breithorn_dem"), ".png"))
 ## Run the model for the whole Breithorn glacier
 zs = dem[mask.==1] .- z_weather_station # use elevation of weather station as datum
 dt = diff(t)[1]
-total_massbalance, point_massbalance = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-point_massbalance_map = dem.*NaN
-point_massbalance_map[mask.==1] .= point_massbalance
-heatmap(point_massbalance_map)
-savefig(make_sha_filename(joinpath(results_dir, "breithorn_massbalance_field"), ".png"))
+glacier_net_balance, net_balance = glacier_net_balance_fn(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+net_balance_map = dem.*NaN
+net_balance_map[mask.==1] .= net_balance
+heatmap(net_balance_map)
+savefig(make_sha_filename(joinpath(results_dir, "breithorn_net_balance_field"), ".png"))
 
 ## Generate output table
 # make a table for massbalance of different temperature offsets and store it
 out = []
 for dT = -4:4
     Ts_ = Ts .+ dT
-    massbalance_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    massbalance_, _ = glacier_net_balance_fn(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
     push!(out, [dT, massbalance_])
 end
-writedlm(make_sha_filename("../../results/deltaT_impact", ".csv"), out, ',')
+writedlm(make_sha_filename(joinpath(results_dir, "deltaT_impact"), ".csv"), out, ',')

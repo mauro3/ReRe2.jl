@@ -2,11 +2,17 @@
 
 This an example code repository going along with the workshop https://github.com/mauro3/CORDS/tree/master/Workshop-Reproducible-Research
 
-## Melt model
+## Mass balance model
 
-The model is a simple temperature index melt model.
-Temperature is lapses with a linear function.
-Precipitation is from measurements and a threshold temperature determines whether it is snow.
+- The melt model is a simple temperature index melt model.
+- Temperature lapses with a linear function.
+- Precipitation is from measurements and a threshold temperature determines whether it is snow.
+
+The main function is `glacier_net_balance_fn` which returns:
+- the glacier net balance [m] (i.e. how much volume was gained or lost
+  over the time period)
+- net balance at all points [m] (i.e. how much volume was gained or
+  lost at each grid cell)
 
 
 ## Data

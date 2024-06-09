@@ -63,13 +63,13 @@ savefig(make_sha_filename("results/synthetic_T", ".png"))
 ele = 1500
 Ts_ele = lapse.(synthetic_T.(t), ele, lapse_rate)
 Ps = synthetic_P.(t);
-total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
+net_balance_fn(dt, Ts_ele, Ps, melt_factor, T_threshold)
 
 ## Run the model for one year for the whole glacier
 xs, zs = synthetic_glacier()
 Ts = synthetic_T.(t)
-total_massbalance, point_massbalance = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-plot(xs, point_massbalance)
+glacier_net_balance, net_balance = glacier_net_balance_fn(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
+plot(xs, net_balance)
 savefig(make_sha_filename("results/synthetic_massbalance_field", ".png"))
 
 ## Generate output table
@@ -77,8 +77,8 @@ savefig(make_sha_filename("results/synthetic_massbalance_field", ".png"))
 out = []
 for dT = -4:4
     Ts_ = synthetic_T.(t) .+ dT
-    total_massbalance_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
-    push!(out, [dT, total_massbalance_])
+    glacier_net_balance_, _ = glacier_net_balance_fn(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    push!(out, [dT, glacier_net_balance_])
 end
 
 mkpath("results")

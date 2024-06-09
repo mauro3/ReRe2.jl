@@ -21,11 +21,11 @@ melt_factor = 0.005
 # with no melt, accumulation is equal precip
 melt_factor = 0
 T_threshold = 10
-@test total_point_balance(1, 1, 1.54, melt_factor, T_threshold)==1.54
+@test net_balance_fn(1, 1, 1.54, melt_factor, T_threshold)==1.54
 
 # also test example
 include("../examples/simple.jl")
-@test total_massbalance ≈ -0.11096645178976892
+@test glacier_net_balance ≈ -0.11096645178976892
 
 # utils.jl testing
 @test startswith(make_sha_filename("test", ".png"), "test-")
