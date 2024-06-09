@@ -62,7 +62,7 @@ function download_file(url, destination_file)
 
     if isfile(destination_file)
         # do nothing
-        println(" Already downloaded $destination_file")
+        println("Already downloaded $destination_file")
     else
         # download
         print("Downloading $destination_file ... ")

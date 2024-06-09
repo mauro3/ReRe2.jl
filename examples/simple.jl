@@ -38,12 +38,13 @@ end
 Generate synthetic glacier elevation, note this is a 1D glacier!
 
 # Returns
-- Array of elevations
+- vector of x-locations
+- vector of elevations
 """
 function synthetic_glacier()
     x = 0:500:5000
     elevation = x .* 0.2 .+ 1400
-    return elevation
+    return x, elevation
 end
 
 ## Define constants
@@ -65,19 +66,19 @@ Ps = synthetic_P.(t);
 total_point_balance(dt, Ts_ele, Ps, melt_factor, T_threshold)
 
 ## Run the model for one year for the whole glacier
-zs = synthetic_glacier()
+xs, zs = synthetic_glacier()
 Ts = synthetic_T.(t)
 total_massbalance, point_massbalance = glacier_balance(zs, dt, Ts, Ps, melt_factor, T_threshold, lapse_rate)
-plot(point_massbalance)
+plot(xs, point_massbalance)
 savefig(make_sha_filename("results/synthetic_massbalance_field", ".png"))
 
 ## Generate output table
-# make a table for different temperature offsets and store it
+# make a table of mass-balance for different temperature offsets and store it
 out = []
 for dT = -4:4
     Ts_ = synthetic_T.(t) .+ dT
-    massbalance_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
-    push!(out, [dT, massbalance_])
+    total_massbalance_, _ = glacier_balance(zs, dt, Ts_, Ps, melt_factor, T_threshold, lapse_rate)
+    push!(out, [dT, total_massbalance_])
 end
 
 mkpath("results")
